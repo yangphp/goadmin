@@ -1,0 +1,174 @@
+{{define "admins/admin_log_list.html"}}
+<!--_meta 作为公共模版分离出去-->
+{{template "public/meta.html" .}}
+<!--/meta 作为公共模版分离出去-->
+    {{ $current_menu := GetCurrentMenu }}
+    <title>{{$current_menu.MenuName}} - H-ui.admin v3.0</title>
+    <meta name="keywords" content="H-ui.admin v3.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+    <meta name="description" content="H-ui.admin v3.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+<!--_header 作为公共模版分离出去-->
+{{template "public/header.html" .}}
+<!--/_header 作为公共模版分离出去-->
+
+<!--_menu 作为公共模版分离出去-->
+{{template "public/menu.html" .}}
+<!--/_menu 作为公共模版分离出去-->
+
+<section class="Hui-article-box">
+    <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页
+        <span class="c-gray en">&gt;</span>
+        管理员管理
+        <span class="c-gray en">&gt;</span>
+        管理员日志
+        <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a>
+    </nav>
+    <div class="Hui-article">
+
+        <article class="cl pd-20">
+            <form method="get" action="/admin/admin_log">
+            <div class="text-c">
+
+                日期范围：
+                <input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'logmax\')||\'%y-%M-%d\'}'})" id="logmin" class="input-text Wdate" style="width:120px;" name="start_date" value="{{.start_date}}">
+                -
+                <input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'logmin\')}',maxDate:'%y-%M-%d'})" id="logmax" class="input-text Wdate" style="width:120px;" name="end_date" value="{{.end_date}}">
+                <input type="text" name="admin_uname" id="admin_uname" value="{{.admin_uname}}" placeholder=" 管理员账号" style="width:250px" class="input-text">
+                <input type="text" name="ip_addr" id="ip_addr" value="{{.ip_addr}}" placeholder=" IP地址 " style="width:250px" class="input-text">
+                <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 搜资讯</button>
+            </div>
+            </form>
+            <div class="cl pd-5 bg-1 bk-gray mt-20">
+				<span class="l">
+                    {{ $admin_uid := GetAdminId}}
+
+				    <a href="javascript:;" {{if has_powa $admin_uid "/admin/admin_log_delbatch"}} style="display:none" {{end}}  onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>
+				</span>
+                <span class="r">共有数据：<strong>{{.count}}</strong> 条</span>
+            </div>
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th width="25"><input type="checkbox" name="" id="checkAll" value=""></th>
+                        <th width="80">ID</th>
+                        <th  width="120">管理员账号</th>
+                        <th width="150">请求地址</th>
+                        <th width="80">请求方式</th>
+                        <th >请求参数</th>
+                        <th width="110">IP地址</th>
+                        <th width="120">添加时间</th>
+                        <th width="120">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{ range $k,$v1 := .list}}
+                    <tr class="text-c">
+                        <td><input type="checkbox" value="{{$v1.Id}}" name="lids"></td>
+                        <td>{{$v1.Id}}</td>
+                        <td >{{AdminsUname $v1.AdminUid}}</td>
+                        <td>{{$v1.RequestUrl}}</td>
+                        <td>{{$v1.RequestMethod}}</td>
+                        <td class="text-l">{{$v1.RequestParams}}</td>
+                        <td>{{$v1.IpAddr}}</td>
+                        <td >{{$v1.AddDatetime}}</td>
+                        <td class="f-14 td-manage">
+                           <a class="ml-5" {{if has_powa $admin_uid "/admin/admin_log_del"}} style="display:none" {{end}}  onClick="article_del(this,{{$v1.Id}})" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+                    </tr>
+                    {{end}}
+
+                    </tbody>
+                </table>
+            </div>
+        </article>
+    </div>
+</section>
+
+<!--_footer 作为公共模版分离出去-->
+{{template "public/footer.html" .}}
+<!--/_footer /作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/h-ui.lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+    $('.table-sort').dataTable({
+        "aaSorting": [[ 1, "desc" ]],//默认第几个排序
+        "bStateSave": true,//状态保存
+        "aoColumnDefs": [
+            //{"bVisible": true, "aTargets": [ 3,4,5 ]} ,//控制列的隐藏显示
+            {"orderable":false,"aTargets":[0,8]}// 不参与排序的列
+        ]
+    });
+
+
+    $("#checkAll").click(function (){
+        if($("#checkAll").prop("checked")==true){
+
+            $("input[name='lids']").each(function(){
+                $(this).prop("checked",true)
+            })
+        }else{
+
+            $("input[name='lids']").each(function(){
+                $(this).prop("checked",false)
+            })
+        }
+    })
+    //批量删除
+    function datadel(){
+        var chk_value = []
+        var flag = 0
+        $("input[name='lids']").each(function (){
+            if ($(this).prop("checked") == true){
+                flag = 1
+                chk_value.push($(this).val())
+            }
+        })
+        if (flag == 0){
+            layer.alert("请先选择要删除的记录")
+        }else{
+            var slected = chk_value.join(",")
+            $.post("/admin/admin_log_delbatch",{ids:slected},function (data){
+                if (data.code == 0){
+                    layer.msg('已批量删除!',{icon:1,time:1000});
+                    window.location.reload()
+                }else{
+                    layer.alert("批量删除失败")
+                }
+            },'json')
+        }
+
+    }
+
+    /*资讯-删除*/
+    function article_del(obj,id){
+        layer.confirm('确认要删除吗？',function(index){
+            $.ajax({
+                type: 'POST',
+                url: '/admin/admin_log_del',
+                dataType: 'json',
+                data:{id:id},
+                success: function(data){
+                    if (data.code == 0){
+                        $(obj).parents("tr").remove();
+                        layer.msg('已删除!',{icon:1,time:1000});
+                    }else{
+                        layer.alert("删除失败")
+                    }
+
+                },
+                error:function(data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+    }
+
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
+{{end}}

@@ -1,0 +1,82 @@
+{{define "admins/admin_info.html"}}
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="/static/h-ui.lib/html5.js"></script>
+    <script type="text/javascript" src="lib/respond.min.js"></script>
+    <![endif]-->
+    <link href="/static/h-ui/css/H-ui.min.css" rel="stylesheet" type="text/css" />
+    <link href="/static/h-ui.admin/css/H-ui.admin.css" rel="stylesheet" type="text/css" />
+    <link href="/static/h-ui.lib/Hui-iconfont/1.0.8/iconfont.css" rel="stylesheet" type="text/css" />
+    <!--[if IE 6]>
+    <script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>
+    <script>DD_belatedPNG.fix('*');</script><![endif]-->
+    <title>查看管理员信息</title>
+</head>
+<body>
+<div class="cl pd-20" style=" background-color:#5bacb6">
+
+    <dl style="margin-left:40px; color:#fff">
+        <dt><span class="f-18">账号：{{.info.AdminUname}}</span> <span class="pl-10 f-12">ID：{{.info.AdminUid}}</span></dt>
+        <dd class="pt-10 f-12" style="margin-left:0">
+           {{.info.AdminRemark}}
+        </dd>
+    </dl>
+</div>
+<div class="pd-20">
+    <table class="table">
+        <tbody>
+        <tr>
+            <th class="text-r" width="80">姓名：</th>
+            <td>{{.info.AdminTruename}}</td>
+        </tr>
+        <tr>
+            <th class="text-r" width="80">部门：</th>
+            <td>{{.info.AdminDept}}</td>
+        </tr>
+
+        <tr>
+            <th class="text-r">级别：</th>
+            <td >
+                {{if eq .info.IsAdmin 1}}<span class="label label-success radius">普通管理员</span>
+                {{else if eq .info.IsAdmin 2}}<span class="label label-warning radius">超级管理员</span>
+                {{end}}
+            </td>
+        </tr>
+        <tr>
+            <th class="text-r">状态：</th>
+            <td >
+                {{if eq .info.AdminStatus 1}}<span class="label label-success radius">状态正常</span>
+                {{else if eq .info.AdminStatus 2}}<span class="label label-warning radius">禁止登录</span>
+                {{end}}
+            </td>
+        </tr>
+        <tr>
+            <th class="text-r">登录次数：</th>
+            <td>{{.info.Logincount}}</td>
+        </tr>
+        <tr>
+            <th class="text-r">最后登录：</th>
+            <td>{{.info.Lastlogin}}</td>
+        </tr>
+        <tr>
+            <th class="text-r">添加时间：</th>
+            <td>{{.info.AddDatetime}}</td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+<!--_footer 作为公共模版分离出去-->
+{{template "public/footer.html" .}}
+<!--/_footer /作为公共模版分离出去-->
+
+</body>
+</html>
+{{end}}

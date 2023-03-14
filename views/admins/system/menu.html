@@ -1,0 +1,180 @@
+{{define "system/menu.html"}}
+<!--_meta 作为公共模版分离出去-->
+{{template "public/meta.html" .}}
+<!--/meta 作为公共模版分离出去-->
+    <title>栏目管理</title>
+</head>
+<body>
+<!--_header 作为公共模版分离出去-->
+{{template "public/header.html" .}}
+<!--/_header 作为公共模版分离出去-->
+
+<!--_menu 作为公共模版分离出去-->
+{{template "public/menu.html" .}}
+<!--/_menu 作为公共模版分离出去-->
+<section class="Hui-article-box" style="bottom: unset">
+    <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 系统管理 <span class="c-gray en">&gt;</span> 栏目管理 <a class="btn btn-success radius r btn-refresh" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+    <div class="pd-20 text-c">
+        <div class="text-c">
+            <form method="get" action="/admin/system_menus" >
+            <input type="text" name="menu_name" id="menu_name" value="{{.menu_name}}" placeholder="栏目名称" style="width:250px" class="input-text">
+            <button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+            </form>
+        </div>
+        <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l">
+            {{ $admin_uid := GetAdminId}}
+
+            <a class="btn btn-primary radius" {{if has_powa $admin_uid "/admin/system_menus_edit"}} style="display:none" {{end}} onclick="system_category_add('添加栏目','/admin/system_menus_edit')" href="javascript:;"><i class="Hui-iconfont">&#xe600;</i> 添加栏目</a></span> <span class="r">共有数据：<strong>{{.sum}}</strong> 条</span> </div>
+        <div class="mt-20">
+            <table class="table table-border table-bordered table-hover table-bg">
+                <thead>
+                <tr class="text-c">
+                    <th width="25"><input type="checkbox" name="" value=""></th>
+                    <th width="80">ID</th>
+                    <th width="80">排序</th>
+                    <th width="100">栏目类型</th>
+                    <th>栏目名称</th>
+                    <th width="250">栏目url</th>
+                    <th width="100">状态</th>
+                    <th width="150">添加时间</th>
+                    <th width="100">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {{ range $k,$v1 := .treeList}}
+                <tr class="text-c">
+                    <td><input type="checkbox" name="" value=""></td>
+                    <td>{{$v1.Id}}</td>
+                    <td>{{$v1.MenuOrder}}</td>
+                    <td class="text-l">
+                        {{if eq $v1.MenuType  1}} 一级分类
+                        {{ else if eq $v1.MenuType 2}} &nbsp;&nbsp;&nbsp;&nbsp;--|菜单
+                        {{ else if eq $v1.MenuType 3}} &nbsp;&nbsp;&nbsp;&nbsp;----|操作
+                        {{ end }}
+                    </td>
+                    <td class="text-l">
+                        {{if eq $v1.MenuType 1}}
+                        {{ else if eq $v1.MenuType 2}} &nbsp;&nbsp;&nbsp;&nbsp;--|
+                        {{ else if eq $v1.MenuType 3}} &nbsp;&nbsp;&nbsp;&nbsp;----|
+                        {{ end }}
+                        {{$v1.MenuName}}
+                    </td>
+                    <td>{{$v1.MenuUrl}}</td>
+                    <td>
+                        {{if eq $v1.MenuStatus  1}} 启用
+                        {{else}} 停用
+                        {{end}}
+                    </td>
+                    <td>{{$v1.AddDatetime}}</td>
+                    <td class="f-14"><a title="编辑" href="javascript:;" onclick="system_category_edit('栏目编辑','/admin/system_menus_edit',{{$v1.Id}},'700','480')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="article_category_del(this,{{$v1.Id}})" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+                </tr>
+                    {{ range $k2,$v2 := $v1.Children}}
+                    <tr class="text-c">
+                        <td><input type="checkbox" name="" value=""></td>
+                        <td>{{$v2.Id}}</td>
+                        <td>{{$v2.MenuOrder}}</td>
+                        <td class="text-l">
+                            {{if eq $v2.MenuType  1}} 一级分类
+                            {{ else if eq $v2.MenuType 2}} &nbsp;&nbsp;&nbsp;&nbsp;--|菜单
+                            {{ else if eq $v2.MenuType 3}} &nbsp;&nbsp;&nbsp;&nbsp;----|操作
+                            {{ end }}
+                        </td>
+                        <td class="text-l">
+                            {{if eq $v2.MenuType 1}}
+                            {{ else if eq $v2.MenuType 2}} &nbsp;&nbsp;&nbsp;&nbsp;--|
+                            {{ else if eq $v2.MenuType 3}} &nbsp;&nbsp;&nbsp;&nbsp;----|
+                            {{ end }}
+                            {{$v2.MenuName}}
+                        </td>
+                        <td>{{$v2.MenuUrl}}</td>
+                        <td>
+                            {{if eq $v2.MenuStatus  1}} 启用
+                            {{else}} 停用
+                            {{end}}
+                        </td>
+                        <td>{{$v2.AddDatetime}}</td>
+                        <td class="f-14"><a title="编辑" href="javascript:;" onclick="system_category_edit('栏目编辑','/admin/system_menus_edit',{{$v2.Id}},'700','480')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="article_category_del(this,{{$v2.Id}})" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+                    </tr>
+                        {{ range $k3,$v3 := $v2.Children}}
+                        <tr class="text-c">
+                            <td><input type="checkbox" name="" value=""></td>
+                            <td>{{$v3.Id}}</td>
+                            <td>{{$v3.MenuOrder}}</td>
+                            <td class="text-l">
+                                {{if eq $v3.MenuType  1}} 一级分类
+                                {{ else if eq $v3.MenuType 2}} &nbsp;&nbsp;&nbsp;&nbsp;--|菜单
+                                {{ else if eq $v3.MenuType 3}} &nbsp;&nbsp;&nbsp;&nbsp;----|操作
+                                {{ end }}
+                            </td>
+                            <td class="text-l">
+                                {{if eq $v3.MenuType 1}}
+                                {{ else if eq $v3.MenuType 2}} &nbsp;&nbsp;&nbsp;&nbsp;--|
+                                {{ else if eq $v3.MenuType 3}} &nbsp;&nbsp;&nbsp;&nbsp;----|
+                                {{ end }}
+                                {{$v3.MenuName}}
+                            </td>
+                            <td>{{$v3.MenuUrl}}</td>
+                            <td>{{if eq $v3.MenuStatus  1}} 启用
+                                {{else}} 停用
+                                {{end}}
+                            </td>
+                            <td>{{$v3.AddDatetime}}</td>
+                            <td class="f-14">
+                                <a title="编辑" href="javascript:;" {{if has_powa $admin_uid "/admin/system_menus_edit"}} style="display:none" {{end}} onclick="system_category_edit('栏目编辑','/admin/system_menus_edit',{{$v3.Id}},'700','480')" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
+                                <a title="删除" href="javascript:;" {{if has_powa $admin_uid "/admin/system_menus_del"}} style="display:none" {{end}} onclick="article_category_del(this,{{$v3.Id}})" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+                        </tr>
+                        {{ end }}
+                    {{ end }}
+                {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+
+<!--_footer 作为公共模版分离出去-->
+{{template "public/footer.html" .}}
+<!--/_footer /作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/h-ui.lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+    $('.table-sort').dataTable({
+        "aaSorting": [[ 1, "desc" ]],//默认第几个排序
+        "bStateSave": true,//状态保存
+        "aoColumnDefs": [
+            //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+            {"orderable":false,"aTargets":[0,4]}// 制定列不参与排序
+        ]
+    });
+    /*系统-栏目-添加*/
+    function system_category_add(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+    /*系统-栏目-编辑*/
+    function system_category_edit(title,url,id,w,h){
+        layer_show(title,url+"?id="+id,w,h);
+    }
+    /*系统-栏目-删除*/
+    function article_category_del(obj,id){
+        layer.confirm('确认要删除吗？',function(index){
+            $.post("/admin/system_menus_del",{id:id},function(res){
+                if (res.code==0){
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!',{icon:1,time:1000});
+                }else{
+                    layer.msg(res.msg);
+                }
+            },'json')
+
+        });
+    }
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
+{{end}}

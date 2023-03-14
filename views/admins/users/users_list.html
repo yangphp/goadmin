@@ -1,0 +1,171 @@
+{{define "users/users_list.html"}}
+<!--_meta 作为公共模版分离出去-->
+{{template "public/meta.html" .}}
+<!--/meta 作为公共模版分离出去-->
+
+  <title>会员列表 - 会员管理 - H-ui.admin v3.0</title>
+  <meta name="keywords" content="H-ui.admin v3.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+  <meta name="description" content="H-ui.admin v3.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+<!--_header 作为公共模版分离出去-->
+{{template "public/header.html" .}}
+<!--/_header 作为公共模版分离出去-->
+
+<!--_menu 作为公共模版分离出去-->
+{{template "public/menu.html" .}}
+<!--/_menu 作为公共模版分离出去-->
+{{ $admin_uid := GetAdminId}}
+<section class="Hui-article-box">
+  <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 会员管理 <span class="c-gray en">&gt;</span> 会员列表<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+  <div class="Hui-article">
+    <article class="cl pd-20">
+
+      <div class="text-c">
+        <form name="postform" method="get" action="/admin/users_list">
+        <span class="select-box inline">
+            <select name="utype" class="select">
+                <option value="">全部角色</option>
+                {{range $k,$v := .type_list }}
+                    <option value="{{$v.Id}}" {{if eq $v.Id $.utype}}selected{{end}} >{{$v.TypeName}}</option>
+                {{end}}
+            </select>
+        </span>
+        日期范围：
+        <input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}'})" id="datemin" class="input-text Wdate" name="start_date" value="{{.start_date}}" style="width:120px;">
+        -
+        <input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d'})" id="datemax" class="input-text Wdate" name="end_date" value="{{.end_date}}" style="width:120px;">
+
+        <input type="text" class="input-text" style="width:100px" placeholder="UID"  name="uid" value="{{.uid}}">
+        <input type="text" class="input-text" style="width:150px" placeholder="账号"  name="username" value="{{.username}}">
+        <input type="text" class="input-text" style="width:150px" placeholder="手机号"  name="mobile" value="{{.mobile}}">
+
+        <button type="submit" class="btn btn-success radius" id="" name=""><i class="Hui-iconfont">&#xe665;</i> 搜用户</button>
+        </form>
+      </div>
+      <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l">
+           <a href="javascript:;" {{if  has_powa $admin_uid "/admin/users_add"}} style="display:none" {{end}} onclick="member_add('添加会员','/admin/users_add','','510')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加会员</a>
+
+       </span> <span class="r">共有数据：<strong>{{.count}}</strong> 条</span> </div>
+      <div class="mt-20">
+        <table class="table table-border table-bordered table-hover table-bg table-sort">
+          <thead>
+          <tr class="text-c">
+            <th width="25"><input type="checkbox" name="" value=""></th>
+            <th width="80">UID</th>
+            <th width="100">用户名</th>
+            <th width="90">手机</th>
+            <th width="100">角色</th>
+            <th width="130">头像</th>
+            <th width="100">积分</th>
+            <th width="100">状态</th>
+            <th >备注</th>
+            <th width="130">最后访问时间</th>
+            <th width="130">加入时间</th>
+            <th width="100">操作</th>
+          </tr>
+          </thead>
+          <tbody>
+          {{range $k,$v := .list}}
+          <tr class="text-c">
+            <td><input type="checkbox" value="1" name=""></td>
+            <td>{{$v.Uid}}</td>
+            <td><u style="cursor:pointer" class="text-primary" onclick="member_show('{{$v.Username}}','/admin/users_show','{{$v.Uid}}','360','400')">{{$v.Username}}</u></td>
+            <td>{{$v.Mobile}}</td>
+            <td>{{$v.TypeName}}</td>
+            <td><img src="{{$v.Uface}}" width="110" height="110"></td>
+            <td >{{$v.Uscore}}</td>
+            <td class="td-status">
+              {{if eq $v.Ustatus 1}}<span class="label label-success radius">已启用</span>
+              {{else if eq $v.Ustatus 2}}<span class="label label-warning radius">风控中</span>
+              {{else if eq $v.Ustatus 3}}<span class="label label-danger radius">永久封禁</span>
+              {{end}}
+            </td>
+            <td  class="text-l">{{$v.Uremark}}</td>
+            <td>{{$v.LastDatetime}}</td>
+            <td>{{$v.AddDatetime}}</td>
+
+            <td class="td-manage">
+              <a title="编辑" href="javascript:;" {{if  has_powa $admin_uid "/admin/users_edit"}} style="display:none" {{end}} onclick="member_edit('编辑','/admin/users_edit','{{$v.Uid}}','','510')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
+              <a title="删除" href="javascript:;" {{if has_powa $admin_uid "/admin/users_del"}}style="display:none" {{end}}  onclick="member_del(this,'{{$v.Uid}}')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>
+          </tr>
+          {{end}}
+
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!--_footer 作为公共模版分离出去-->
+{{template "public/footer.html" .}}
+<!--/_footer /作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/h-ui.lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+  $(function(){
+    $('.table-sort').dataTable({
+      "aaSorting": [[ 1, "desc" ]],//默认第几个排序
+      "bStateSave": true,//状态保存
+      "aoColumnDefs": [
+        //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+        {"orderable":false,"aTargets":[0,8,9,11]}// 制定列不参与排序
+      ]
+    });
+    $('.table-sort tbody').on( 'click', 'tr', function () {
+      if ( $(this).hasClass('selected') ) {
+        $(this).removeClass('selected');
+      }
+      else {
+        table.$('tr.selected').removeClass('selected');
+        $(this).addClass('selected');
+      }
+    });
+  });
+  /*用户-添加*/
+  function member_add(title,url,w,h){
+    layer_show(title,url,w,h);
+  }
+  /*用户-查看*/
+  function member_show(title,url,id,w,h){
+    layer_show(title,url+"?uid="+id,w,h);
+  }
+
+  /*用户-编辑*/
+  function member_edit(title,url,id,w,h){
+    layer_show(title,url+"?uid="+id,w,h);
+  }
+
+  /*用户-删除*/
+  function member_del(obj,id){
+
+
+    layer.confirm('确认要删除吗？',function(index){
+
+      $.ajax({
+        type: 'GET',
+        url: '/admin/users_del?uid='+id,
+        dataType: 'json',
+        success: function(data){
+          if (data.code == 0){
+            $(obj).parents("tr").remove();
+            layer.msg('已删除!',{icon:1,time:1000});
+          }else{
+            layer.msg(data.msg);
+          }
+        },
+        error:function(data) {
+          console.log(data.msg);
+        },
+      });
+    });
+  }
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
+{{end}}

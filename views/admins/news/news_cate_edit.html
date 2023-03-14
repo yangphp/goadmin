@@ -1,0 +1,100 @@
+{{define "news/news_cate_edit.html"}}
+
+<!--_meta 作为公共模版分离出去-->
+{{template "public/meta.html" .}}
+<!--/meta 作为公共模版分离出去-->
+<title>添加/编辑 文章分类 - H-ui.admin v3.0</title>
+<meta name="keywords" content="H-ui.admin v3.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description" content="H-ui.admin v3.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+<article class="cl pd-20">
+    <form action="/admin/news_cate_save" method="post" class="form form-horizontal" id="form-member-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>分类名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{{.cate.CateName}}" placeholder="" id="cate_name" name="cate_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">分类排序：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" placeholder="数字越大越靠前" value="{{.cate.CateOrders}}" name="cate_orders" id="cate_orders">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>是否显示：</label>
+            <div class="formControls col-xs-8 col-sm-9 skin-minimal">
+                <div class="radio-box">
+                    <input name="is_show" type="radio" id="is_show-1" value="1" {{if eq .cate.IsShow 1 }}checked{{end}} {{if not .cate.IsShow}}checked{{end}}>
+                    <label for="is_show-1">显示</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" id="is_show-2" name="is_show" value="2" {{if eq .cate.IsShow 2 }}checked{{end}}>
+                    <label for="is_show-2">隐藏</label>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input type="hidden" name="id" id="id" value="{{.cate.Id}}" />
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+{{template "public/footer.html"}}
+<!--/_footer /作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/h-ui.lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+
+        $("#form-member-add").validate({
+            rules:{
+                cate_name:{
+                    required:true,
+                    minlength:2,
+                    maxlength:20
+                },
+
+
+            },
+            onkeyup:false,
+            focusCleanup:true,
+            success:"valid",
+            submitHandler:function(form){
+                $(form).ajaxSubmit(function (data){
+                    if(data.code == 0){
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.window.location.reload();
+                        parent.layer.close(index);
+                    }else{
+                        layer.alert(data.msg)
+                    }
+                });
+
+
+
+            }
+        });
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
+{{end}}

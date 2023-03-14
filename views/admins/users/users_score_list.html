@@ -1,0 +1,115 @@
+{{define "users/users_score_list.html"}}
+<!--_meta 作为公共模版分离出去-->
+{{template "public/meta.html" .}}
+<!--/meta 作为公共模版分离出去-->
+<title>积分管理 - H-ui.admin v3.0</title>
+<meta name="keywords" content="H-ui.admin v3.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description" content="H-ui.admin v3.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+<!--_header 作为公共模版分离出去-->
+{{template "public/header.html" .}}
+<!--/_header 作为公共模版分离出去-->
+
+<!--_menu 作为公共模版分离出去-->
+{{template "public/menu.html" .}}
+<!--/_menu 作为公共模版分离出去-->
+
+<section class="Hui-article-box">
+    <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 用户管理 <span class="c-gray en">&gt;</span> 积分管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+    <div class="Hui-article">
+
+        <article class="cl pd-20">
+            <div class="text-c">
+                <form name="postform" method="get" action="/admin/users_socre">
+
+                    日期范围：
+                    <input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}'})" id="datemin" class="input-text Wdate" name="start_date" value="{{.start_date}}" style="width:120px;">
+                    -
+                    <input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d'})" id="datemax" class="input-text Wdate" name="end_date" value="{{.end_date}}" style="width:120px;">
+
+                    <input type="text" class="input-text" style="width:100px" placeholder="UID"  name="uid" value="{{.uid}}">
+                    <input type="text" class="input-text" style="width:150px" placeholder="账号"  name="username" value="{{.username}}">
+
+                    <button type="submit" class="btn btn-success radius" id="" name=""><i class="Hui-iconfont">&#xe665;</i> 搜用户</button>
+                </form>
+            </div>
+
+            <div class="cl pd-5 bg-1 bk-gray"> <span class="l">
+                {{ $admin_uid := GetAdminId}}
+
+                <a class="btn btn-primary radius" href="javascript:;" {{if has_powa $admin_uid "/admin/users_socre_change"}} style="display:none" {{end}} onclick="admin_role_add('变更积分','/admin/users_socre_change','800')"><i class="Hui-iconfont">&#xe600;</i> 变更积分</a> </span> <span class="r">共有数据：<strong>{{.count}}</strong> 条</span> </div>
+            <div class="mt-10">
+                <table class="table table-border table-bordered table-hover  table-bg  table-sort">
+                    <thead>
+                    <tr>
+                        <th scope="col" colspan="10">用户积分管理</th>
+                    </tr>
+                    <tr class="text-c">
+                        <th width="25"><input type="checkbox" value="" name=""></th>
+                        <th width="40">ID</th>
+                        <th width="100">账号</th>
+                        <th width="100">UID</th>
+                        <th width="100">开始积分</th>
+                        <th width="100">变动积分</th>
+                        <th width="100">结束积分</th>
+                        <th >变更说明</th>
+                        <th width="130">添加时间</th>
+                        <th width="100">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{ range $k,$v := .list }}
+                    <tr class="text-c">
+                        <td><input type="checkbox" value="" name=""></td>
+                        <td>{{$v.Id}}</td>
+                        <td>{{$v.Username}}</td>
+                        <td>{{$v.Uid}}</td>
+                        <td>{{$v.BeginScore}}</td>
+                        <td>{{$v.ChangeScore}}</td>
+                        <td>{{$v.EndScore}}</td>
+                        <td>{{$v.ChangeInfo}}</td>
+                        <td>{{$v.AddDatetime}}</td>
+                        <td class="f-14">
+                            <a title="变更积分" href="javascript:;" {{if has_powa $admin_uid "/admin/users_socre_change"}} style="display:none" {{end}} onclick="admin_role_edit('变更积分','/admin/users_socre_change',{{$v.Uid}})" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
+                    </tr>
+                    {{end}}
+
+                    </tbody>
+                </table>
+            </div>
+        </article>
+    </div>
+</section>
+
+<!--_footer 作为公共模版分离出去-->
+{{template "public/footer.html"}}
+<!--/_footer /作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/h-ui.lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+    $('.table-sort').dataTable({
+        "aaSorting": [[ 1, "desc" ]],//默认第几个排序
+        "bStateSave": true,//状态保存
+        "aoColumnDefs": [
+            //{"bVisible": true, "aTargets": [ 3,4,5 ]} ,//控制列的隐藏显示
+            {"orderable":false,"aTargets":[0,8,9]}// 不参与排序的列
+        ]
+    });
+    /*管理员-角色-添加*/
+    function admin_role_add(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+    /*管理员-角色-编辑*/
+    function admin_role_edit(title,url,id,w,h){
+        layer_show(title,url+"?uid="+id,w,h);
+    }
+
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
+{{end}}

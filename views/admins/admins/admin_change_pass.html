@@ -1,0 +1,95 @@
+{{define "admins/admin_change_pass.html"}}
+<!--_meta 作为公共模版分离出去-->
+{{template "public/meta.html" .}}
+<!--/meta 作为公共模版分离出去-->
+
+    <title>修改密码 - 管理员管理 - H-ui.admin v3.0</title>
+    <meta name="keywords" content="H-ui.admin v3.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+    <meta name="description" content="H-ui.admin v3.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+<article class="cl pd-20">
+    <form action="/admin/admin_save_pass" method="post" class="form form-horizontal" id="form-change-password">
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>账户：</label>
+            <div class="formControls col-xs-8 col-sm-9"> {{.info.AdminUname}} </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>旧密码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="password" class="input-text" autocomplete="off" placeholder="" name="old_pass" id="old_pass">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>新密码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="password" class="input-text" autocomplete="off" placeholder="不修改请留空" name="new_pass" id="new_pass">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>确认密码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="password" class="input-text" autocomplete="off" placeholder="不修改请留空" name="re_pass" id="new-re_pass">
+            </div>
+        </div>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input type="hidden" name="admin_id" value="{{.info.AdminUid}}">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;保存&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+{{template "public/footer.html" .}}
+<!--/_footer /作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/h-ui.lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $("#form-change-password").validate({
+            rules:{
+                old_pass:{
+                    required:true,
+                    minlength:6,
+                    maxlength:20
+                },
+                new_pass:{
+                    required:true,
+                    minlength:6,
+                    maxlength:20
+                },
+                re_pass:{
+                    required:true,
+                    minlength:6,
+                    maxlength:20,
+                    equalTo: "#new_pass"
+                },
+            },
+            onkeyup:false,
+            focusCleanup:true,
+            success:"valid",
+            submitHandler:function(form){
+                $(form).ajaxSubmit(function (data){
+                    if (data.code == 0){
+                        layer.alert("密码修改成功，请重新登录！",function (){
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.window.location.href = "/admin/loginout"
+                        })
+
+                    }else{
+                        layer.alert(data.msg)
+                    }
+                });
+            }
+        });
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
+{{end}}

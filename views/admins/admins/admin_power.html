@@ -1,0 +1,141 @@
+{{define "admins/admin_power.html"}}
+<!--_meta 作为公共模版分离出去-->
+{{template "public/meta.html" .}}
+<!--/meta 作为公共模版分离出去-->
+  <title>新建网站角色 - 管理员管理 - H-ui.admin v3.0</title>
+  <meta name="keywords" content="H-ui.admin v3.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+  <meta name="description" content="H-ui.admin v3.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+<style>
+  .permission-list > dd > dl > dt{
+    width: 110px;
+  }
+</style>
+</head>
+<body>
+<article class="cl pd-20">
+  <form action="/admin/admin_power_save" method="post" class="form form-horizontal" id="form-admin-role-add">
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3">管理员账号：</label>
+      <div class="formControls col-xs-8 col-sm-9">
+        <input type="text" disabled class="input-text" value="{{.info.AdminUname}}" placeholder="" >
+      </div>
+    </div>
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3">管理员姓名：</label>
+      <div class="formControls col-xs-8 col-sm-9">
+        <input type="text" disabled class="input-text" value="{{.info.AdminTruename}}" placeholder="" >
+      </div>
+    </div>
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>管理员级别：</label>
+      <div class="formControls col-xs-8 col-sm-9 skin-minimal">
+        <div class="radio-box">
+          <input name="is_admin" type="radio" id="is_admin-1" value="1" {{if eq .info.IsAdmin 1}}checked{{end}}>
+          <label for="is_admin-1">普通管理员</label>
+        </div>
+        <div class="radio-box">
+          <input name="is_admin" type="radio" id="is_admin-2"  value="2" {{if eq .info.IsAdmin 2}}checked{{end}}>
+          <label for="is_admin-2">超级管理员(拥有所有权限)</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row cl">
+      <label class="form-label col-xs-4 col-sm-3">权限列表：</label>
+      <div class="formControls col-xs-8 col-sm-9">
+        {{ range $k,$v1 := .menus}}
+          <dl class="permission-list">
+          <dt>
+            <label>
+              <input type="checkbox" value="{{$v1.Id}}"  name="pids[]" {{if has_pow $.power_str $v1.Id}}checked{{end}}  id="user-Character-{{$v1.Id}}">
+              {{$v1.MenuName}}</label>
+          </dt>
+          {{range $k2,$v2 := $v1.Children }}
+            <dd>
+              <dl class="cl permission-list2">
+                <dt>
+                  <label class="">
+                    <input type="checkbox" value="{{$v2.Id}}" name="pids[]" {{if has_pow $.power_str $v2.Id}}checked{{end}} id="user-Character-{{$v1.Id}}-{{$v2.Id}}">
+                    {{$v2.MenuName}}</label>
+                </dt>
+                <dd>
+                  {{range $k3,$v3 := $v2.Children }}
+                  <label class="">
+                    <input type="checkbox" value="{{$v3.Id}}" name="pids[]"  {{if has_pow $.power_str $v3.Id}}checked{{end}} id="user-Character-{{$v1.Id}}-{{$v2.Id}}-{{$v3.Id}}">
+                    {{$v3.MenuName}}</label>
+                  {{end}}
+                </dd>
+              </dl>
+            </dd>
+          {{end}}
+        </dl>
+        {{end}}
+
+      </div>
+    </div>
+    <div class="row cl">
+      <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+        <input type="hidden" name="aaid" value="{{.info.AdminUid}}">
+        <button type="submit" class="btn btn-success radius" id="admin-role-save" name="admin-role-save"><i class="icon-ok"></i> 确定</button>
+      </div>
+    </div>
+  </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+{{template "public/footer.html" .}}
+
+<!--/_footer /作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/h-ui.lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+  $(function(){
+    $(".permission-list dt input:checkbox").click(function(){
+      $(this).closest("dl").find("dd input:checkbox").prop("checked",$(this).prop("checked"));
+    });
+    $(".permission-list2 dd input:checkbox").click(function(){
+      var l =$(this).parent().parent().find("input:checked").length;
+      var l2=$(this).parents(".permission-list").find(".permission-list2 dd").find("input:checked").length;
+      if($(this).prop("checked")){
+        $(this).closest("dl").find("dt input:checkbox").prop("checked",true);
+        $(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",true);
+      }
+      else{
+        if(l==0){
+          //$(this).closest("dl").find("dt input:checkbox").prop("checked",false);
+        }
+        if(l2==0){
+          //$(this).parents(".permission-list").find("dt").first().find("input:checkbox").prop("checked",false);
+        }
+      }
+    });
+
+    $("#form-admin-role-add").validate({
+      rules:{
+
+      },
+      onkeyup:false,
+      focusCleanup:true,
+      success:"valid",
+      submitHandler:function(form){
+        $(form).ajaxSubmit(function (data){
+          if (data.code == 0){
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.window.location.reload();
+            parent.layer.close(index);
+          }else{
+            layer.alert(data.msg)
+          }
+        });
+
+      }
+    });
+  });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
+{{end}}

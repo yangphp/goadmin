@@ -1,0 +1,138 @@
+{{define "system/menu_edit.html"}}
+<!--_meta 作为公共模版分离出去-->
+{{template "public/meta.html" .}}
+<!--/meta 作为公共模版分离出去-->
+
+    <title>添加/编辑 栏目 - H-ui.admin v3.0</title>
+    <meta name="keywords" content="H-ui.admin v3.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+    <meta name="description" content="H-ui.admin v3.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+<article class="cl pd-20">
+    <form action="/admin/system_menus_save" method="post" class="form form-horizontal" id="form-member-add">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>栏目/菜单名称：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{{.menu.MenuName}}" placeholder="" id="menu_name" name="menu_name">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>栏目/菜单类型：</label>
+            <div class="formControls col-xs-8 col-sm-9 skin-minimal">
+                <div class="radio-box">
+                    <input name="menu_type" type="radio" id="menu_type-1" value="1" {{if eq .menu.MenuType 1 }}checked{{end}} {{if not .menu.MenuType}}checked{{end}}>
+                    <label for="menu_type-1">分类</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" id="menu_type-2" name="menu_type" value="2" {{if eq .menu.MenuType 2 }}checked{{end}}>
+                    <label for="menu_type-2">菜单</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" id="menu_type-3" name="menu_type" value="3" {{if eq .menu.MenuType 3 }}checked{{end}}>
+                    <label for="menu_type-3">操作</label>
+                </div>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">上级菜单：</label>
+            <div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
+				<select class="select" size="1" name="menu_pid">
+					<option value="" >顶级分类</option>
+                    {{ range $k,$v1 := .treeList}}
+                    <option value="{{$v1.Id}}" {{if eq $.menu.MenuPid $v1.Id }}selected{{end}}>&nbsp;&nbsp;&nbsp;&nbsp;-| {{$v1.MenuName}}</option>
+                        {{ range $k2,$v2 := $v1.Children}}
+                        <option value="{{$v2.Id}}" {{if eq $.menu.MenuPid $v2.Id }}selected{{end}}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --| {{$v2.MenuName}}</option>
+                        {{end}}
+                    {{end }}
+				</select>
+				</span> </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">菜单/操作URL：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{{.menu.MenuUrl}}" placeholder="顶级分类可以为空" id="menu_url" name="menu_url">
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">排序：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" placeholder="数字越大越靠前" value="{{.menu.MenuOrder}}" name="menu_order" id="menu_order">
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3">栏目状态：</label>
+            <div class="formControls col-xs-8 col-sm-9 skin-minimal">
+                <div class="radio-box">
+                    <input name="menu_status" type="radio" id="menu_status-1" value="1" {{if eq .menu.MenuStatus 1 }}checked{{end}} {{if not .menu.MenuStatus}}checked{{end}}>
+                    <label for="menu_status-1">正常</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" id="menu_status-2" name="menu_status" value="2" {{if eq .menu.MenuStatus 2 }}checked{{end}}>
+                    <label for="menu_type-2">停用</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input type="hidden" name="id" id="id" value="{{.menu.Id}}" />
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+{{template "public/footer.html"}}
+<!--/_footer /作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/h-ui.lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+
+        $("#form-member-add").validate({
+            rules:{
+                menu_name:{
+                    required:true,
+                    minlength:2,
+                    maxlength:16
+                },
+
+
+            },
+            onkeyup:false,
+            focusCleanup:true,
+            success:"valid",
+            submitHandler:function(form){
+                $(form).ajaxSubmit(function (data){
+                    if(data.code == 0){
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.window.location.reload();
+                        parent.layer.close(index);
+                    }else{
+                        layer.alert(data.msg)
+                    }
+                });
+
+
+
+            }
+        });
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
+{{end}}

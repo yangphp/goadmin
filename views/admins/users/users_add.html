@@ -1,0 +1,278 @@
+{{define "users/users_add.html"}}
+<!--_meta 作为公共模版分离出去-->
+{{template "public/meta.html" .}}
+<!--/meta 作为公共模版分离出去-->
+<title>添加会员 - 会员管理 - H-ui.admin v3.0</title>
+<meta name="keywords" content="H-ui.admin v3.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+<meta name="description" content="H-ui.admin v3.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+<link href="/static/h-ui.lib/webuploader/0.1.5/webuploader.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<article class="page-container">
+    <form class="form form-horizontal" id="form-article-add" method="post" action="/admin/users_save">
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>账号：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{{.users.Username}}" placeholder="" id="username" name="username">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>新密码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="password" class="input-text" autocomplete="off" placeholder="不修改请留空" name="passwd" id="newpassword">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>确认密码：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="password" class="input-text" autocomplete="off" placeholder="不修改请留空" name="repasswd" id="new-password2">
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>会员角色：</label>
+            <div class="formControls col-xs-8 col-sm-9"> <span class="select-box">
+				<select name="utype" class="select">
+                    {{range $k,$v := .type_list}}
+                        <option value="{{$v.Id}}" {{if eq $v.Id $.users.Utype}}selected{{end}}>{{$v.TypeName}}</option>
+                    {{end}}
+				</select>
+				</span> </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>手机号：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <input type="text" class="input-text" value="{{.users.Mobile}}" placeholder="" id="mobile" name="mobile">
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">头像：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <div class="uploader-thum-container">
+                    <div id="fileList" class="uploader-list">
+                        {{if .users.Uface}}
+                        <div id="WU_FILE_0" class="item upload-state-success"><div class="pic-box"><img src="{{.users.Uface}}" style="height: 100px"></div><div class="info">{{.users.Uface}}</div><p class="state">已上传</p><div class="progress-box" style="display: none;"><span class="progress-bar radius"><span class="sr-only" style="width: 100%;"></span></span></div></div>
+                        {{end}}
+
+                    </div>
+                    <div id="filePicker">选择图片</div>
+                    <button id="btn-star" class="btn btn-default btn-uploadstar radius ml-10">开始上传</button>
+
+                    <input type="hidden" name="uface" id="news_pic" value="{{.users.Uface}}">
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">会员状态：</label>
+            <div class="formControls col-xs-8 col-sm-9 skin-minimal">
+                <div class="radio-box">
+                    <input name="ustatus" type="radio" id="ustatus-1" value="1" {{if eq .users.Ustatus 1 }}checked{{end}} {{if not .users.Ustatus}}checked{{end}}>
+                    <label for="ustatus-1">正常</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" id="ustatus-2" name="ustatus" value="2" {{if eq .users.Ustatus 2 }}checked{{end}}>
+                    <label for="ustatus-2">风控中</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" id="ustatus-3" name="ustatus" value="3" {{if eq .users.Ustatus 3 }}checked{{end}}>
+                    <label for="ustatus-3">永久封禁</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2">会员备注：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <textarea name="uremark" cols="" rows="" class="textarea"  placeholder="说点什么..." onKeyUp="textarealength(this,200)">{{.users.Uremark}}</textarea>
+                <p class="textarea-numberbar"><em class="textarea-length">0</em>/200</p>
+            </div>
+        </div>
+
+
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+                <input type="hidden" name="uid" id="uid" value="{{.users.Uid}}">
+                <button  class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 提交</button>
+                <button onClick="removeIframe();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+            </div>
+        </div>
+    </form>
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+{{template "public/footer.html" .}}
+<!--/_footer /作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="/static/h-ui.lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript" src="/static/h-ui.lib/webuploader/0.1.5/webuploader.min.js"></script>
+<script type="text/javascript">
+
+
+
+    $(function(){
+
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+
+
+        $list = $("#fileList"),
+            $btn = $("#btn-star"),
+            state = "pending",
+            uploader;
+
+        var uploader = WebUploader.create({
+            auto: true,
+            swf: '/static/h-ui.lib/webuploader/0.1.5/Uploader.swf',
+
+            // 文件接收服务端。
+            server: '/admin/fileupload',
+
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '#filePicker',
+
+            // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+            resize: false,
+            // 只允许选择图片文件。
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png',
+                mimeTypes: 'image/*'
+            }
+        });
+        uploader.on( 'fileQueued', function( file ) {
+            var $li = $(
+                    '<div id="' + file.id + '" class="item">' +
+                    '<div class="pic-box"><img></div>'+
+                    '<div class="info">' + file.name + '</div>' +
+                    '<p class="state">等待上传...</p>'+
+                    '</div>'
+                ),
+                $img = $li.find('img');
+            $list.append( $li );
+
+            // 创建缩略图
+            // 如果为非图片文件，可以不用调用此方法。
+            //thumbnailWidth x thumbnailHeight 为 100 x 100
+
+            uploader.makeThumb( file, function( error, src ) {
+                if ( error ) {
+                    $img.replaceWith('<span>不能预览</span>');
+                    return;
+                }
+                //缩略图尺寸
+                $img.attr( 'src', src );
+            }, 100, 100 );
+        });
+        // 文件上传过程中创建进度条实时显示。
+        uploader.on( 'uploadProgress', function( file, percentage ) {
+            var $li = $( '#'+file.id ),
+                $percent = $li.find('.progress-box .sr-only');
+
+            // 避免重复创建
+            if ( !$percent.length ) {
+                $percent = $('<div class="progress-box"><span class="progress-bar radius"><span class="sr-only" style="width:0%"></span></span></div>').appendTo( $li ).find('.sr-only');
+            }
+            $li.find(".state").text("上传中");
+            $percent.css( 'width', percentage * 100 + '%' );
+        });
+
+        // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+        uploader.on( 'uploadSuccess', function( file ,res) {
+
+            $("#news_pic").val(res.img_url)
+
+            $( '#'+file.id ).addClass('upload-state-success').find(".state").text("已上传");
+        });
+
+        // 文件上传失败，显示上传出错。
+        uploader.on( 'uploadError', function( file ) {
+            $( '#'+file.id ).addClass('upload-state-error').find(".state").text("上传出错");
+        });
+
+        // 完成上传完了，成功或者失败，先删除进度条。
+        uploader.on( 'uploadComplete', function( file ) {
+            $( '#'+file.id ).find('.progress-box').fadeOut();
+        });
+        uploader.on('all', function (type) {
+            if (type === 'startUpload') {
+                state = 'uploading';
+            } else if (type === 'stopUpload') {
+                state = 'paused';
+            } else if (type === 'uploadFinished') {
+                state = 'done';
+            }
+
+            if (state === 'uploading') {
+                $btn.text('暂停上传');
+            } else {
+                $btn.text('开始上传');
+            }
+        });
+        $btn.on('click', function () {
+            if (state === 'uploading') {
+                uploader.stop();
+            } else {
+                uploader.upload();
+            }
+        });
+
+
+
+        $("#form-article-add").validate({
+            rules:{
+                username:{
+                    required:true,
+                    minlength:3,
+                    maxlength:20
+                },
+                mobile:{
+                  required:true,
+                  isMobile:true,
+                },
+                newpassword:{
+                    required:true,
+                    minlength:6,
+                    maxlength:20
+                },
+                newpassword2:{
+                    required:true,
+                    minlength:6,
+                    maxlength:20,
+                    equalTo: "#newpassword"
+                },
+            },
+            onkeyup:false,
+            focusCleanup:true,
+            success:"valid",
+            submitHandler:function(form){
+
+                $(form).ajaxSubmit(function (data){
+                    if(data.code == 0){
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.window.location.reload();
+                        parent.layer.close(index);
+                    }else{
+                        layer.alert(data.msg)
+                    }
+                });
+            }
+        });
+
+    });
+
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
+{{end}}

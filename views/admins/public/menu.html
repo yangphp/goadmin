@@ -1,0 +1,31 @@
+{{define "public/menu.html"}}
+<!--_menu 作为公共模版分离出去-->
+<aside class="Hui-aside">
+
+  <div class="menu_dropdown bk_2">
+    {{ $admin_uid := GetAdminId}}
+
+    {{ $current_menu := GetCurrentMenu }}
+    {{ range $k,$v1 := GetMenus }}
+    <dl >
+      {{if has_pows $admin_uid $v1.Id}}
+      <dt {{if eq $current_menu.MenuPid  $v1.Id}} class="selected" {{end}}><i class="Hui-iconfont">&#xe616;</i> {{$v1.MenuName}}<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+      <dd {{if eq $current_menu.MenuPid  $v1.Id}} style="display: block" {{end}} >
+        <ul>
+
+          {{ range $k2,$v2 := $v1.Children}}
+          {{if has_pows $admin_uid $v2.Id}}
+          <li {{if eq $current_menu.Id  $v2.Id}}class="current"{{end}} ><a href="{{$v2.MenuUrl}}" title="{{$v2.MenuName}}">{{$v2.MenuName}}</a></li>
+          {{ end }}
+          {{end}}
+        </ul>
+      </dd>
+      {{end}}
+
+    </dl>
+    {{end}}
+  </div>
+</aside>
+<div class="dislpayArrow hidden-xs"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a></div>
+<!--/_menu 作为公共模版分离出去-->
+{{end}}
